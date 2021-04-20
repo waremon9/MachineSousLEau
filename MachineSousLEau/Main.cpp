@@ -13,6 +13,7 @@ std::vector<sf::CircleShape> AllEnemiesIcon;
 Submarine* Player;
 sf::CircleShape* PlayerIcon;
 sf::CircleShape* GameWindow;
+sf::CircleShape* Minimap;
 
 int main()
 {
@@ -35,7 +36,7 @@ int main()
 	GameWindow->setOutlineThickness(-5);
 	GameWindow->setPosition(650, 0);
 	//Minimap
-	sf::CircleShape* Minimap = new sf::CircleShape(120, 40);
+	Minimap = new sf::CircleShape(120, 40);
 	Minimap->setFillColor(sf::Color::Black);
 	Minimap->setOutlineColor(sf::Color::Green);
 	Minimap->setOutlineThickness(-2);
@@ -49,14 +50,11 @@ int main()
 	Player = new Submarine();
 	Player->setPosition(GameWindow->getPosition() + sf::Vector2f(GameWindow->getRadius(), GameWindow->getRadius()));
 
-	AllEnemies.push_back(new Enemie(GameWindow->getPosition() + sf::Vector2f(265,565)));
-	AllEnemies.push_back(new Enemie(GameWindow->getPosition() + sf::Vector2f(265+50,565)));
-	AllEnemies.push_back(new Enemie(GameWindow->getPosition() + sf::Vector2f(265+100,565)));
-	AllEnemies.push_back(new Enemie(GameWindow->getPosition() + sf::Vector2f(265+150,565)));
+	AllEnemies.push_back(new Enemie(GameWindow->getPosition() + sf::Vector2f(265, 565)));
 	AllEnemies.push_back(new Enemie(GameWindow->getPosition() + sf::Vector2f(265+200,565)));
 	AllEnemies.push_back(new Enemie(GameWindow->getPosition() + sf::Vector2f(265+250,565)));
-	//AllEnemies.push_back(new Enemie(GameWindow->getPosition() + sf::Vector2f(700,386)));
-	//AllEnemies.push_back(new Enemie(GameWindow->getPosition() + sf::Vector2f(250,352)));
+	AllEnemies.push_back(new Enemie(GameWindow->getPosition() + sf::Vector2f(700,386)));
+	AllEnemies.push_back(new Enemie(GameWindow->getPosition() + sf::Vector2f(250,352)));
 
 
 	// Start the game loop
@@ -105,19 +103,23 @@ void UpdateMinimap() {
 	for (Enemie* e : AllEnemies) {
 		sf::Vector2f posE = e->getPosition() - GameWindow->getPosition();
 
-		float x = (posE.x - posP.x);
-		float y = (posE.y - posP.y);
+		float x = (posP.x - posE.x);
+		float y = (posP.y - posE.y);
 
 		float Distance = sqrt(x * x + y * y);
-		float Angle = std::atan(y / x);
+		float Angle = std::atan2(y, -x);
 
-		float xP = PlayerIcon->getPosition().x - (1.f / 6.f) * Distance * std::cos(Angle);
-		float yP = PlayerIcon->getPosition().y - (1.f / 6.f) * Distance * std::sin(Angle);
+		float reduction = 10;
 
-		sf::CircleShape icon(3, 10);
-		icon.setFillColor(sf::Color::Yellow);
-		icon.setOrigin(1.5, 1.5);
-		icon.setPosition(xP, yP);
-		AllEnemiesIcon.push_back(icon);
+		float xP = PlayerIcon->getPosition().x + (1.f / reduction) * Distance * std::cos(Angle);
+		float yP = PlayerIcon->getPosition().y - (1.f / reduction) * Distance * std::sin(Angle);
+
+		if (abs(sqrt((xP - PlayerIcon->getPosition().x) * (xP - PlayerIcon->getPosition().x) + (yP - PlayerIcon->getPosition().y) * (yP - PlayerIcon->getPosition().y))) < Minimap->getRadius()) {
+			sf::CircleShape icon(3, 10);
+			icon.setFillColor(sf::Color::Yellow);
+			icon.setOrigin(1.5, 1.5);
+			icon.setPosition(xP, yP);
+			AllEnemiesIcon.push_back(icon);
+		}
 	}
 }
