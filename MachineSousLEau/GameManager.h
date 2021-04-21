@@ -33,10 +33,15 @@ private:
 
 	void UpdateMinimap();
 	void SpawnEnemie();
+	void UpdateSpawnCooldown();
 	float RandomFloat(float, float);
 
 	bool RightDown;
 	bool LeftDown;
+
+	int MaxEnemieNumber;
+	float BaseEnemieSpawnCooldown;
+	float EnemieSpawnCooldown;
 
 public:
 	static GameManager* getInstance();

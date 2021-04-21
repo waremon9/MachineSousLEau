@@ -11,7 +11,54 @@ GameManager* GameManager::Instance = nullptr;
 
 GameManager::GameManager() {
 
+}
 
+void GameManager::initialize() {
+
+    srand((unsigned)time(NULL));
+
+    // Create the main window
+    Window = new sf::RenderWindow(sf::VideoMode(1500, 850), "SFML window");
+
+    DeltaClock = new sf::Clock;
+    DeltaTime = 0;
+
+    MaxEnemieNumber = 500;
+    BaseEnemieSpawnCooldown = EnemieSpawnCooldown = 1.2;
+
+    //LeftPanel
+    rect = new sf::RectangleShape(sf::Vector2f(650, 850));
+    rect->setFillColor(sf::Color(100, 180, 100, 70));
+    rect->setOutlineColor(sf::Color::Green);
+    rect->setOutlineThickness(-5);
+    //RightPanel
+    rect2 = new sf::RectangleShape(sf::Vector2f(850, 850));
+    rect2->setFillColor(sf::Color(100, 100, 100, 150));
+    rect2->setPosition(650, 0);
+    //GameCamera
+    GameWindow = new sf::CircleShape(850 / 2, 80);
+    GameWindow->setFillColor(sf::Color::Black);
+    GameWindow->setOutlineColor(sf::Color::Green);
+    GameWindow->setOutlineThickness(-5);
+    GameWindow->setPosition(650, 0);
+    //Minimap
+    Minimap = new sf::CircleShape(120, 40);
+    Minimap->setFillColor(sf::Color::Black);
+    Minimap->setOutlineColor(sf::Color::Green);
+    Minimap->setOutlineThickness(-2);
+    Minimap->setPosition(20, 20);
+    //Player minimap icon
+    PlayerIcon = new sf::CircleShape(5, 10);
+    PlayerIcon->setFillColor(sf::Color::Red);
+    PlayerIcon->setOrigin(5, 5);
+    PlayerIcon->setPosition(Minimap->getPosition() + sf::Vector2f(Minimap->getRadius(), Minimap->getRadius()));
+
+    Player = new Submarine(GameWindow->getPosition() + sf::Vector2f(GameWindow->getRadius(), GameWindow->getRadius()));
+    Player->setCoordinate(GameWindow->getPosition() + sf::Vector2f(GameWindow->getRadius(), GameWindow->getRadius()));
+
+    for (int i = 0; i < 30; i++) {
+        SpawnEnemie();
+    }
 }
 
 void GameManager::gameLoop() {
@@ -71,6 +118,8 @@ void GameManager::processEvent()
 
 void GameManager::updateEntity()
 {
+    UpdateSpawnCooldown();
+
     UpdateMinimap();
 
     if (RightDown) Player->addRotation(0.05);
@@ -132,51 +181,6 @@ GameManager* GameManager::getInstance()
     return Instance;
 }
 
-void GameManager::initialize() {
-
-    srand((unsigned)time(NULL));
-
-    // Create the main window
-    Window = new sf::RenderWindow(sf::VideoMode(1500, 850), "SFML window");
-
-    DeltaClock = new sf::Clock;
-    DeltaTime = 0;
-
-    //LeftPanel
-    rect = new sf::RectangleShape(sf::Vector2f(650, 850));
-    rect->setFillColor(sf::Color(100, 180, 100, 70));
-    rect->setOutlineColor(sf::Color::Green);
-    rect->setOutlineThickness(-5);
-    //RightPanel
-    rect2 = new sf::RectangleShape(sf::Vector2f(850, 850));
-    rect2->setFillColor(sf::Color(100, 100, 100, 150));
-    rect2->setPosition(650, 0);
-    //GameCamera
-    GameWindow = new sf::CircleShape(850 / 2, 80);
-    GameWindow->setFillColor(sf::Color::Black);
-    GameWindow->setOutlineColor(sf::Color::Green);
-    GameWindow->setOutlineThickness(-5);
-    GameWindow->setPosition(650, 0);
-    //Minimap
-    Minimap = new sf::CircleShape(120, 40);
-    Minimap->setFillColor(sf::Color::Black);
-    Minimap->setOutlineColor(sf::Color::Green);
-    Minimap->setOutlineThickness(-2);
-    Minimap->setPosition(20, 20);
-    //Player minimap icon
-    PlayerIcon = new sf::CircleShape(5, 10);
-    PlayerIcon->setFillColor(sf::Color::Red);
-    PlayerIcon->setOrigin(5, 5);
-    PlayerIcon->setPosition(Minimap->getPosition() + sf::Vector2f(Minimap->getRadius(), Minimap->getRadius()));
-
-    Player = new Submarine(GameWindow->getPosition() + sf::Vector2f(GameWindow->getRadius(), GameWindow->getRadius()));
-    Player->setCoordinate(GameWindow->getPosition() + sf::Vector2f(GameWindow->getRadius(), GameWindow->getRadius()));
-
-    for (int i = 0; i < 100; i++) {
-        SpawnEnemie();
-    }
-}
-
 void GameManager::UpdateMinimap()
 {
     AllEnemiesIcon.clear();
@@ -216,6 +220,18 @@ void GameManager::SpawnEnemie()
     sf::Vector2f randomRelativeCoordinate(cos(randomAngle / 180 * 3.1415) * randomDistance, sin(randomAngle / 180 * 3.1415) * randomDistance);
 
     AllEnemies.push_back(new Enemie(randomRelativeCoordinate + Player->getCoordinate()));
+}
+
+void GameManager::UpdateSpawnCooldown()
+{
+    EnemieSpawnCooldown -= DeltaTime;
+
+    if (EnemieSpawnCooldown <= 0) {
+        EnemieSpawnCooldown = BaseEnemieSpawnCooldown;
+        for (int i = 0; i < 15; i++) {
+            if (AllEnemies.size() <= MaxEnemieNumber)SpawnEnemie();
+        }
+    }
 }
 
 float GameManager::RandomFloat(float LO, float HI)
