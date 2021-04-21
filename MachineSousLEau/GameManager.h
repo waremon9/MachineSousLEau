@@ -22,6 +22,7 @@ private:
 	sf::CircleShape* Minimap;
 	sf::RectangleShape* rect;
 	sf::RectangleShape* rect2;
+	sf::RectangleShape* Sonar;
 
 	void updateDeltaTime();
 	void processEvent();
@@ -32,6 +33,7 @@ private:
 	void initialize();
 
 	void UpdateMinimap();
+	void UpdateSonar();
 	void SpawnEnemie();
 	void UpdateSpawnCooldown();
 	float RandomFloat(float, float);
@@ -42,6 +44,8 @@ private:
 	int MaxEnemieNumber;
 	float BaseEnemieSpawnCooldown;
 	float EnemieSpawnCooldown;
+
+	float SonarRotation;
 
 public:
 	static GameManager* getInstance();

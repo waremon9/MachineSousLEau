@@ -46,7 +46,12 @@ void GameManager::initialize() {
     Minimap->setFillColor(sf::Color::Black);
     Minimap->setOutlineColor(sf::Color::Green);
     Minimap->setOutlineThickness(-2);
-    Minimap->setPosition(20, 20);
+	Minimap->setPosition(20, 20);
+	//Minimap sonar
+	Sonar = new sf::RectangleShape(sf::Vector2f(Minimap->getRadius(), 2));
+    Sonar->setFillColor(sf::Color::Green);
+    Sonar->setOrigin(0, Sonar->getSize().y / 2.f);
+    Sonar->setPosition(Minimap->getPosition().x + Minimap->getRadius(), Minimap->getPosition().y + Minimap->getRadius());
     //Player minimap icon
     PlayerIcon = new sf::CircleShape(5, 10);
     PlayerIcon->setFillColor(sf::Color::Red);
@@ -55,6 +60,8 @@ void GameManager::initialize() {
 
     Player = new Submarine(GameWindow->getPosition() + sf::Vector2f(GameWindow->getRadius(), GameWindow->getRadius()));
     Player->setCoordinate(GameWindow->getPosition() + sf::Vector2f(GameWindow->getRadius(), GameWindow->getRadius()));
+
+    SpawnEnemie();
 }
 
 void GameManager::gameLoop() {
@@ -136,7 +143,6 @@ void GameManager::deleteElement()
             AllEnemies.erase(AllEnemies.begin() + i);
         }
     }
-
 }
 
 void GameManager::updateScreen()
@@ -163,10 +169,14 @@ void GameManager::updateScreen()
     }
 
     Window->draw(*Minimap);
-    Window->draw(*PlayerIcon);
-    for (sf::CircleShape* cs : AllEnemiesIcon) {
-        Window->draw(*cs);
+    for (Enemie* e : AllEnemies) {
+        if (distanceTwoPoint(e->getShapeMinimap()->getPosition(), PlayerIcon->getPosition()) < Minimap->getRadius() + Minimap->getOutlineThickness()){
+            Window->draw(*e->getShapeMinimap());
+        }
     }
+    UpdateSonar();
+	Window->draw(*Sonar);
+	Window->draw(*PlayerIcon);
 
     // Update the window
     Window->display();
@@ -201,11 +211,24 @@ void GameManager::UpdateMinimap()
         float xP = PlayerIcon->getPosition().x + (1.f / reduction) * Distance * std::cos(Angle);
         float yP = PlayerIcon->getPosition().y - (1.f / reduction) * Distance * std::sin(Angle);
 
-        if (distanceTwoPoint(sf::Vector2f(xP,yP), PlayerIcon->getPosition()) < Minimap->getRadius() + Minimap->getOutlineThickness()) {
-            sf::CircleShape* icon = e->getShapeMinimap();
-            icon->setPosition(xP, yP);
-            AllEnemiesIcon.push_back(icon);
-        }
+        sf::CircleShape* icon = e->getShapeMinimap();
+        icon->setPosition(xP, yP);
+    }
+}
+
+void GameManager::UpdateSonar()
+{
+    SonarRotation += DeltaTime * 135;
+    if(SonarRotation>=360) SonarRotation-=360;
+    Sonar->setRotation(SonarRotation);
+
+    for (Enemie* e : AllEnemies) {
+        sf::Vector2f angle(e->getShapeMinimap()->getPosition() - PlayerIcon->getPosition());
+        float RotaEnemie = atan2(angle.y,angle.x) * 180 / PI;
+        while (RotaEnemie >= 360) RotaEnemie -= 360;
+        while (RotaEnemie < 0) RotaEnemie += 360;
+
+        if (SonarRotation - RotaEnemie <= 0.5 && SonarRotation - RotaEnemie >0) e->resetIntensity();
     }
 }
 
