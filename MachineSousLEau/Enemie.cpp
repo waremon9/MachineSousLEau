@@ -7,23 +7,27 @@ Enemie::Enemie()
 	_Shape->setOrigin(15, 15);
 }
 
-Enemie::Enemie(sf::Vector2f pos)
+Enemie::Enemie(sf::Vector2f coord)
 {
 
 	_Shape = new sf::CircleShape(15, 20);
 	_Shape->setFillColor(sf::Color::Yellow);
 	_Shape->setOrigin(15, 15);
-	setPosition(pos);
+	setCoordinate(coord);
 }
 
 sf::CircleShape* Enemie::getShape() { return _Shape; }
 
-sf::Vector2f Enemie::getPosition() const { return Position; }
+sf::Vector2f Enemie::getCoordinate() const { return Coordinate; }
 
-void Enemie::setPosition(sf::Vector2f pos)
+void Enemie::setCoordinate(sf::Vector2f coord)
 {
-	Position = pos;
-	_Shape->setPosition(Position);
+	Coordinate = coord;
+}
+
+void Enemie::setScreenPosition(sf::Vector2f pos)
+{
+	_Shape->setPosition(pos);
 }
 
 void Enemie::Tick(float deltaTime)

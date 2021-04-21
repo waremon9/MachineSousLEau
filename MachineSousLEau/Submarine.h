@@ -4,16 +4,29 @@
 class Submarine
 {
 private:
-	sf::CircleShape* Sub;
-	sf::Vector2f Position;
+	sf::RectangleShape* Sub;
+	sf::Vector2f Coordinate;
+	sf::Vector2f ScreenPosition;
+	sf::Vector2f Velocity;
+	float Rotation;
+	bool Moving;
+	float Speed;
 
 public:
-	Submarine();
+	Submarine(sf::Vector2f);
 
-	sf::CircleShape* getShape();
-	sf::Vector2f getPosition() const;
+	sf::RectangleShape* getShape();
+	sf::Vector2f getCoordinate() const;
+	sf::Vector2f getScreenPosition() const;
+	float getRotation() const;
 
-	void setPosition(sf::Vector2f);
+	void motorIsOn(bool);
+	void addVelocity(sf::Vector2f);
+	void addRotation(float);
+	void resetVelocity();
+
+	void setCoordinate(sf::Vector2f);
+	void setRotation(float);
 	void Tick(float);
 };
 

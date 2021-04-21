@@ -15,7 +15,7 @@ private:
 	float DeltaTime;
 
 	std::vector<Enemie*> AllEnemies;
-	std::vector<sf::CircleShape> AllEnemiesIcon;
+	std::vector<sf::CircleShape*> AllEnemiesIcon;
 	Submarine* Player;
 	sf::CircleShape* PlayerIcon;
 	sf::CircleShape* GameWindow;
@@ -33,10 +33,15 @@ private:
 
 	void UpdateMinimap();
 
+	bool RightDown;
+	bool LeftDown;
+
 public:
 	static GameManager* getInstance();
 
 	void gameLoop();
+
+	float distanceTwoPoint(sf::Vector2f, sf::Vector2f);
 
 	sf::RenderWindow* getWindow() const { return Window; }
 };

@@ -30,6 +30,14 @@ void GameManager::gameLoop() {
     }
 }
 
+float GameManager::distanceTwoPoint(sf::Vector2f a, sf::Vector2f b)
+{
+    float X = (a.x - b.x);
+    float Y = (a.y - b.y);
+
+    return abs(sqrt(X * X + Y * Y));
+}
+
 void GameManager::updateDeltaTime()
 {
     DeltaTime = DeltaClock->getElapsedTime().asSeconds();
@@ -45,12 +53,30 @@ void GameManager::processEvent()
         if (event.type == sf::Event::Closed)
             Window->close();
 
+        if ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Up))
+            Player->motorIsOn(true);
+        if ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Down))
+            Player->motorIsOn(false);
+        if ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Right))
+            RightDown = true;
+        if ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Left))
+            LeftDown = true;
+
+        if ((event.type == sf::Event::KeyReleased) && (event.key.code == sf::Keyboard::Right))
+            RightDown = false;
+        if ((event.type == sf::Event::KeyReleased) && (event.key.code == sf::Keyboard::Left))
+            LeftDown = false;
     }
 }
 
 void GameManager::updateEntity()
 {
     UpdateMinimap();
+
+    if (RightDown) Player->addRotation(0.05);
+    if (LeftDown) Player->addRotation(-0.05);
+
+    Player->Tick(DeltaTime);
 }
 
 void GameManager::deleteElement()
@@ -63,20 +89,28 @@ void GameManager::updateScreen()
     // Clear screen
     Window->clear();
 
+    //Panel
     Window->draw(*rect);
     Window->draw(*rect2);
 
+    //Game right panel
     Window->draw(*GameWindow);
     Window->draw(*Player->getShape());
 
     for (Enemie* e : AllEnemies) {
-        Window->draw(*e->getShape());
+        sf::Vector2f relativePosition(e->getCoordinate() - Player->getCoordinate());
+
+        if (distanceTwoPoint(e->getCoordinate(), Player->getCoordinate()) < GameWindow->getRadius() + GameWindow->getOutlineThickness()) {
+            e->setScreenPosition(Player->getScreenPosition() + relativePosition);
+
+            Window->draw(*e->getShape());
+        }
     }
 
     Window->draw(*Minimap);
     Window->draw(*PlayerIcon);
-    for (sf::CircleShape cs : AllEnemiesIcon) {
-        Window->draw(cs);
+    for (sf::CircleShape* cs : AllEnemiesIcon) {
+        Window->draw(*cs);
     }
 
     // Update the window
@@ -129,8 +163,8 @@ void GameManager::initialize() {
     PlayerIcon->setOrigin(5, 5);
     PlayerIcon->setPosition(Minimap->getPosition() + sf::Vector2f(Minimap->getRadius(), Minimap->getRadius()));
 
-    Player = new Submarine();
-    Player->setPosition(GameWindow->getPosition() + sf::Vector2f(GameWindow->getRadius(), GameWindow->getRadius()));
+    Player = new Submarine(GameWindow->getPosition() + sf::Vector2f(GameWindow->getRadius(), GameWindow->getRadius()));
+    Player->setCoordinate(GameWindow->getPosition() + sf::Vector2f(GameWindow->getRadius(), GameWindow->getRadius()));
 
     AllEnemies.push_back(new Enemie(GameWindow->getPosition() + sf::Vector2f(265, 565)));
     AllEnemies.push_back(new Enemie(GameWindow->getPosition() + sf::Vector2f(265 + 200, 565)));
@@ -142,9 +176,9 @@ void GameManager::initialize() {
 void GameManager::UpdateMinimap()
 {
     AllEnemiesIcon.clear();
-    sf::Vector2f posP = Player->getPosition();
+    sf::Vector2f posP = Player->getCoordinate();
     for (Enemie* e : AllEnemies) {
-        sf::Vector2f posE = e->getPosition();
+        sf::Vector2f posE = e->getCoordinate();
 
         float x = (posP.x - posE.x);
         float y = (posP.y - posE.y);
@@ -152,16 +186,18 @@ void GameManager::UpdateMinimap()
         float Distance = sqrt(x * x + y * y);
         float Angle = std::atan2(y, -x);
 
+        Angle = Angle - (90 - Player->getRotation()) / 180*PI;
+
         float reduction = 10;
 
         float xP = PlayerIcon->getPosition().x + (1.f / reduction) * Distance * std::cos(Angle);
         float yP = PlayerIcon->getPosition().y - (1.f / reduction) * Distance * std::sin(Angle);
 
-        if (abs(sqrt((xP - PlayerIcon->getPosition().x) * (xP - PlayerIcon->getPosition().x) + (yP - PlayerIcon->getPosition().y) * (yP - PlayerIcon->getPosition().y))) < Minimap->getRadius()) {
-            sf::CircleShape icon(3, 10);
-            icon.setFillColor(sf::Color::Yellow);
-            icon.setOrigin(1.5, 1.5);
-            icon.setPosition(xP, yP);
+        if (distanceTwoPoint(sf::Vector2f(xP,yP), PlayerIcon->getPosition()) < Minimap->getRadius() + Minimap->getOutlineThickness()) {
+            sf::CircleShape* icon = new sf::CircleShape(3, 10);
+            icon->setFillColor(sf::Color::Yellow);
+            icon->setOrigin(1.5, 1.5);
+            icon->setPosition(xP, yP);
             AllEnemiesIcon.push_back(icon);
         }
     }
