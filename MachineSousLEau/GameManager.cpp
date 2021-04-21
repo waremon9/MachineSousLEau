@@ -23,8 +23,8 @@ void GameManager::initialize() {
     DeltaClock = new sf::Clock;
     DeltaTime = 0;
 
-    MaxEnemieNumber = 500;
-    BaseEnemieSpawnCooldown = EnemieSpawnCooldown = 1.2;
+    MaxEnemieNumber = 100;
+    BaseEnemieSpawnCooldown = EnemieSpawnCooldown = 0.8;
 
     //LeftPanel
     rect = new sf::RectangleShape(sf::Vector2f(650, 850));
@@ -37,7 +37,7 @@ void GameManager::initialize() {
     rect2->setPosition(650, 0);
     //GameCamera
     GameWindow = new sf::CircleShape(850 / 2, 80);
-    GameWindow->setFillColor(sf::Color::Black);
+    GameWindow->setFillColor(sf::Color(14,28,70));
     GameWindow->setOutlineColor(sf::Color::Green);
     GameWindow->setOutlineThickness(-5);
     GameWindow->setPosition(650, 0);
@@ -55,10 +55,6 @@ void GameManager::initialize() {
 
     Player = new Submarine(GameWindow->getPosition() + sf::Vector2f(GameWindow->getRadius(), GameWindow->getRadius()));
     Player->setCoordinate(GameWindow->getPosition() + sf::Vector2f(GameWindow->getRadius(), GameWindow->getRadius()));
-
-    for (int i = 0; i < 30; i++) {
-        SpawnEnemie();
-    }
 }
 
 void GameManager::gameLoop() {
@@ -119,6 +115,10 @@ void GameManager::processEvent()
 void GameManager::updateEntity()
 {
     UpdateSpawnCooldown();
+
+    for (Enemie* e : AllEnemies) {
+        e->Tick(DeltaTime);
+    }
 
     UpdateMinimap();
 
@@ -226,9 +226,11 @@ void GameManager::UpdateSpawnCooldown()
 {
     EnemieSpawnCooldown -= DeltaTime;
 
+    int QteSpawn = 1;
+
     if (EnemieSpawnCooldown <= 0) {
         EnemieSpawnCooldown = BaseEnemieSpawnCooldown;
-        for (int i = 0; i < 15; i++) {
+        for (int i = 0; i < QteSpawn; i++) {
             if (AllEnemies.size() <= MaxEnemieNumber)SpawnEnemie();
         }
     }

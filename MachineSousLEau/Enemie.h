@@ -6,6 +6,8 @@ class Enemie
 private:
 	sf::CircleShape* _Shape;
 	sf::CircleShape* _ShapeMinimap;
+	float DotIntensity;
+	bool IntensityUp;
 	sf::Vector2f Coordinate;
 	sf::Vector2f ScreenPosition;
 
