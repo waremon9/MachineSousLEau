@@ -1,31 +1,29 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 
-class Submarine
+class Torpedo
 {
 private:
-	sf::RectangleShape* Sub;
+	sf::RectangleShape* Torp;
 	sf::Vector2f Coordinate;
 	sf::Vector2f ScreenPosition;
-	sf::Vector2f Velocity;
-	float Rotation;
-	bool Moving;
+	sf::Vector2f Direction;
+	float Speed;
 	float AccelerationSpeed;
+	float MaxSpeed;
+	float Rotation;
+	float LifeSpan;
 
 public:
-	Submarine(sf::Vector2f);
+	Torpedo(sf::Vector2f, float);
 
 	sf::RectangleShape* getShape();
 	sf::Vector2f getCoordinate() const;
 	sf::Vector2f getScreenPosition() const;
-	float getRotation() const;
-
-	void motorIsOn(bool);
-	void addVelocity(sf::Vector2f);
-	void addRotation(float);
-	void resetVelocity();
+	bool LifeSpanEnded() const;
 
 	void setCoordinate(sf::Vector2f);
+	void setScreenPosition(sf::Vector2f);
 	void setRotation(float);
 	void Tick(float);
 };

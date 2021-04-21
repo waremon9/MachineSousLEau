@@ -5,7 +5,7 @@ Submarine::Submarine(sf::Vector2f pos)
 	Velocity = sf::Vector2f(0, 0);
 	ScreenPosition = pos;
 	Moving = false;
-	Speed = (0.1);
+	AccelerationSpeed = (0.1);
 
 	Sub = new sf::RectangleShape(sf::Vector2f(54,30));
 	Sub->setFillColor(sf::Color::Red);
@@ -66,8 +66,8 @@ void Submarine::setRotation(float rota)
 void Submarine::Tick(float deltaTime)
 {
 	if (Moving) {
-		Velocity.x -= cos(Rotation / 180 * 3.1415) * Speed;
-		Velocity.y -= sin(Rotation / 180 * 3.1415) * Speed;
+		Velocity.x -= cos(Rotation / 180 * 3.1415) * AccelerationSpeed;
+		Velocity.y -= sin(Rotation / 180 * 3.1415) * AccelerationSpeed;
 	}
 	Coordinate += Velocity * deltaTime;
 	Velocity /= 1.0005f;

@@ -3,6 +3,7 @@
 
 class Enemie;
 class Submarine;
+class Torpedo;
 
 class GameManager
 {
@@ -15,6 +16,7 @@ private:
 	float DeltaTime;
 
 	std::vector<Enemie*> AllEnemies;
+	std::vector<Torpedo*> AllTorpedo;
 	std::vector<sf::CircleShape*> AllEnemiesIcon;
 	Submarine* Player;
 	sf::CircleShape* PlayerIcon;
@@ -37,6 +39,7 @@ private:
 	void SpawnEnemie();
 	void UpdateSpawnCooldown();
 	float RandomFloat(float, float);
+	void ShootTorpedo();
 
 	bool RightDown;
 	bool LeftDown;
@@ -53,6 +56,9 @@ public:
 	void gameLoop();
 
 	float distanceTwoPoint(sf::Vector2f, sf::Vector2f);
+
+	Submarine* getPlayer() const;
+	sf::CircleShape* getGameWindow() const;
 
 	sf::RenderWindow* getWindow() const { return Window; }
 };

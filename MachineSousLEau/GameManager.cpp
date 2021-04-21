@@ -4,6 +4,7 @@
 #include <vector>
 #include "Submarine.h"
 #include "Enemie.h"
+#include "Torpedo.h"
 
 #define PI 3.14159265
 
@@ -88,6 +89,16 @@ float GameManager::distanceTwoPoint(sf::Vector2f a, sf::Vector2f b)
     return abs(sqrt(X * X + Y * Y));
 }
 
+Submarine* GameManager::getPlayer() const
+{
+    return Player;
+}
+
+sf::CircleShape* GameManager::getGameWindow() const
+{
+    return GameWindow;
+}
+
 void GameManager::updateDeltaTime()
 {
     DeltaTime = DeltaClock->getElapsedTime().asSeconds();
@@ -116,6 +127,9 @@ void GameManager::processEvent()
             RightDown = false;
         if ((event.type == sf::Event::KeyReleased) && (event.key.code == sf::Keyboard::Left))
             LeftDown = false;
+
+        if ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Space))
+            ShootTorpedo();
     }
 }
 
@@ -129,20 +143,32 @@ void GameManager::updateEntity()
 
     UpdateMinimap();
 
-    if (RightDown) Player->addRotation(0.05);
-    if (LeftDown) Player->addRotation(-0.05);
+    float RotationSpeed = 0.01;
+    if (RightDown) Player->addRotation(RotationSpeed);
+    if (LeftDown) Player->addRotation(-RotationSpeed);
 
     Player->Tick(DeltaTime);
+
+    for (Torpedo* t : AllTorpedo) {
+        t->Tick(DeltaTime);
+    }
 }
 
 void GameManager::deleteElement()
 {
-    for (int i = AllEnemies.size() - 1; i >= 0; i--) {
-        if (distanceTwoPoint(AllEnemies[i]->getCoordinate(), Player->getCoordinate()) > 2000) {
-            delete AllEnemies[i];
-            AllEnemies.erase(AllEnemies.begin() + i);
-        }
-    }
+	for (int i = AllEnemies.size() - 1; i >= 0; i--) {
+		if (distanceTwoPoint(AllEnemies[i]->getCoordinate(), Player->getCoordinate()) > 2000) {
+			delete AllEnemies[i];
+			AllEnemies.erase(AllEnemies.begin() + i);
+		}
+	}
+
+	for (int i = AllTorpedo.size() - 1; i >= 0; i--) {
+		if (AllTorpedo[i]->LifeSpanEnded()) {
+			delete AllTorpedo[i];
+            AllTorpedo.erase(AllTorpedo.begin() + i);
+		}
+	}
 }
 
 void GameManager::updateScreen()
@@ -166,6 +192,16 @@ void GameManager::updateScreen()
 
             Window->draw(*e->getShape());
         }
+    }
+
+    for (Torpedo* t : AllTorpedo) {
+		sf::Vector2f relativePosition(t->getCoordinate() - Player->getCoordinate());
+
+		if (distanceTwoPoint(t->getCoordinate(), Player->getCoordinate()) < GameWindow->getRadius() + GameWindow->getOutlineThickness()) {
+			t->setScreenPosition(Player->getScreenPosition() + relativePosition);
+
+			Window->draw(*t->getShape());
+		}
     }
 
     Window->draw(*Minimap);
@@ -262,4 +298,9 @@ void GameManager::UpdateSpawnCooldown()
 float GameManager::RandomFloat(float LO, float HI)
 {
     return LO + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (HI - LO)));
+}
+
+void GameManager::ShootTorpedo()
+{
+    AllTorpedo.push_back(new Torpedo(Player->getCoordinate(), Player->getRotation()));
 }
