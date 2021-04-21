@@ -194,9 +194,7 @@ void GameManager::UpdateMinimap()
         float yP = PlayerIcon->getPosition().y - (1.f / reduction) * Distance * std::sin(Angle);
 
         if (distanceTwoPoint(sf::Vector2f(xP,yP), PlayerIcon->getPosition()) < Minimap->getRadius() + Minimap->getOutlineThickness()) {
-            sf::CircleShape* icon = new sf::CircleShape(3, 10);
-            icon->setFillColor(sf::Color::Yellow);
-            icon->setOrigin(1.5, 1.5);
+            sf::CircleShape* icon = e->getShapeMinimap();
             icon->setPosition(xP, yP);
             AllEnemiesIcon.push_back(icon);
         }

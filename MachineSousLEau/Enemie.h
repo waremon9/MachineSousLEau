@@ -5,6 +5,7 @@ class Enemie
 {
 private:
 	sf::CircleShape* _Shape;
+	sf::CircleShape* _ShapeMinimap;
 	sf::Vector2f Coordinate;
 	sf::Vector2f ScreenPosition;
 
@@ -13,6 +14,7 @@ public:
 	Enemie(sf::Vector2f);
 
 	sf::CircleShape* getShape();
+	sf::CircleShape* getShapeMinimap();
 	sf::Vector2f getCoordinate() const;
 
 	void setCoordinate(sf::Vector2f);
