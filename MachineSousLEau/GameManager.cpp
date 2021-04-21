@@ -81,7 +81,13 @@ void GameManager::updateEntity()
 
 void GameManager::deleteElement()
 {
-    
+    for (int i = AllEnemies.size() - 1; i >= 0; i--) {
+        if (distanceTwoPoint(AllEnemies[i]->getCoordinate(), Player->getCoordinate()) > 2000) {
+            delete AllEnemies[i];
+            AllEnemies.erase(AllEnemies.begin() + i);
+        }
+    }
+
 }
 
 void GameManager::updateScreen()
@@ -166,11 +172,9 @@ void GameManager::initialize() {
     Player = new Submarine(GameWindow->getPosition() + sf::Vector2f(GameWindow->getRadius(), GameWindow->getRadius()));
     Player->setCoordinate(GameWindow->getPosition() + sf::Vector2f(GameWindow->getRadius(), GameWindow->getRadius()));
 
-    AllEnemies.push_back(new Enemie(GameWindow->getPosition() + sf::Vector2f(265, 565)));
-    AllEnemies.push_back(new Enemie(GameWindow->getPosition() + sf::Vector2f(265 + 200, 565)));
-    AllEnemies.push_back(new Enemie(GameWindow->getPosition() + sf::Vector2f(265 + 250, 565)));
-    AllEnemies.push_back(new Enemie(GameWindow->getPosition() + sf::Vector2f(700, 386)));
-    AllEnemies.push_back(new Enemie(GameWindow->getPosition() + sf::Vector2f(250, 352)));
+    for (int i = 0; i < 100; i++) {
+        SpawnEnemie();
+    }
 }
 
 void GameManager::UpdateMinimap()
@@ -199,4 +203,22 @@ void GameManager::UpdateMinimap()
             AllEnemiesIcon.push_back(icon);
         }
     }
+}
+
+void GameManager::SpawnEnemie()
+{
+    float maxSpawingDistance = 1500;
+    float minSpawningDistance = GameWindow->getRadius() * 1.1f;
+
+    float randomDistance = RandomFloat(minSpawningDistance, maxSpawingDistance);
+    float randomAngle = RandomFloat(0, 360);
+
+    sf::Vector2f randomRelativeCoordinate(cos(randomAngle / 180 * 3.1415) * randomDistance, sin(randomAngle / 180 * 3.1415) * randomDistance);
+
+    AllEnemies.push_back(new Enemie(randomRelativeCoordinate + Player->getCoordinate()));
+}
+
+float GameManager::RandomFloat(float LO, float HI)
+{
+    return LO + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (HI - LO)));
 }

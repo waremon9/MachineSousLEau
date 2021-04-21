@@ -32,6 +32,8 @@ private:
 	void initialize();
 
 	void UpdateMinimap();
+	void SpawnEnemie();
+	float RandomFloat(float, float);
 
 	bool RightDown;
 	bool LeftDown;
