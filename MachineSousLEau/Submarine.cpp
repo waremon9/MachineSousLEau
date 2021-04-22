@@ -15,6 +15,8 @@ Submarine::Submarine(sf::Vector2f pos)
 	maxTorpedo = 5;
 	torpedoCount = 0;
 
+	gasolineLevel = 100;
+
 	Sub = new sf::RectangleShape(sf::Vector2f(54,30));
 	Sub->setFillColor(sf::Color::Red);
 	Sub->setOrigin(27,15);
@@ -79,6 +81,16 @@ void Submarine::useTorpedo()
 	}
 }
 
+float Submarine::getGasoline() const
+{
+	return gasolineLevel;
+}
+
+void Submarine::fillGasoline()
+{
+	gasolineLevel = 100;
+}
+
 
 void Submarine::addVelocity(sf::Vector2f v)
 {
@@ -132,11 +144,20 @@ void Submarine::setRotation(float rota)
 
 void Submarine::Tick(float deltaTime)
 {
-	Velocity.x -= cos(Rotation / 180 * 3.1415) * AccelerationSpeed * speedPower;
-	Velocity.y -= sin(Rotation / 180 * 3.1415) * AccelerationSpeed * speedPower;
+
+	if (gasolineLevel > 0) gasolineLevel -= deltaTime;
+	std::cout << "\n" + std::to_string(gasolineLevel);
+
+	if (gasolineLevel > 0)
+	{
+		Velocity.x -= cos(Rotation / 180 * 3.1415) * AccelerationSpeed * speedPower;
+		Velocity.y -= sin(Rotation / 180 * 3.1415) * AccelerationSpeed * speedPower;
+	}
+	
 
 	Coordinate += Velocity * deltaTime;
 	Velocity /= 1.0005f;
+
 
 	if(torpedoCount < maxTorpedo) torpedoCountdown-= deltaTime;
 	if (torpedoCountdown <= 0)

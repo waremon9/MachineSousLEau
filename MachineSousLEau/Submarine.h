@@ -21,6 +21,8 @@ private:
 	int torpedoCount;
 	int maxTorpedo;
 
+	float gasolineLevel;
+
 public:
 	Submarine(sf::Vector2f);
 
@@ -36,6 +38,9 @@ public:
 	int getTorpedoCount() const;
 	int getMaxTorpedo() const;
 	void useTorpedo();
+
+	float getGasoline() const;
+	void fillGasoline();
 
 	void addVelocity(sf::Vector2f);
 	void addRotation(float);
