@@ -23,7 +23,10 @@ private:
 	sf::CircleShape* GameWindow;
 	sf::CircleShape* Minimap;
 	sf::CircleShape* TorpedoTimer;
+	sf::CircleShape* FuelWarning;
 	sf::Sprite* SpeedIndicator;
+	sf::Sprite* FuelIndicator;
+	sf::RectangleShape* FuelCursor;
 	sf::RectangleShape* rect;
 	sf::RectangleShape* rect2;
 	sf::RectangleShape* Sonar;
@@ -33,6 +36,12 @@ private:
 	sf::RectangleShape* MotorPowerCursor;
 	std::vector<sf::RectangleShape*> TorpedoCharged;
 	sf::Texture* BackgroundText;
+	std::vector<sf::RectangleShape*> OxygenJauges;
+	std::vector<sf::RectangleShape*> OxygenJaugesContent;
+	sf::Font* arial;
+	sf::Text* MinimapText;
+	sf::Text* TorpedoText;
+	sf::Text* OxygenText;
 
 	void updateDeltaTime();
 	void processEvent();
@@ -45,20 +54,31 @@ private:
 	void UpdateMinimap();
 	void UpdateSonar();
 	void UpdateSpeedCursor();
+	void UpdateFuelCursor();
 	void UpdateMotorLevelCursor();
 	void SpawnEnemie();
 	void UpdateSpawnCooldown();
 	float RandomFloat(float, float);
 	void ShootTorpedo();
+	void updateFuelWarning();
+	void updateOxygenLevel();
+	void RefillOxygen();
 
 	bool RightDown;
 	bool LeftDown;
+
+	bool FuelWarningIntensityUp;
+	float FuelWarningIntensity;
 
 	int MaxEnemieNumber;
 	float BaseEnemieSpawnCooldown;
 	float EnemieSpawnCooldown;
 
 	float SonarRotation;
+
+	float OxygenLevelMax;
+	float OxygenLevel;
+	int OxygenJaugeNumber;
 
 public:
 	static GameManager* getInstance();

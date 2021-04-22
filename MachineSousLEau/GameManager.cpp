@@ -111,6 +111,60 @@ void GameManager::initialize() {
     TorpedoTimercursor->setOrigin(0, TorpedoTimercursor->getSize().y / 2.f);
     TorpedoTimercursor->setPosition(TorpedoTimer->getPosition().x + TorpedoTimer->getRadius(), TorpedoTimer->getPosition().y + TorpedoTimer->getRadius());
 
+    //Fuel indicator
+    sf::Texture* textFuel = new sf::Texture();
+    textFuel->loadFromFile("QuarterJauge.png");
+    FuelIndicator = new sf::Sprite();
+    FuelIndicator->setTexture(*textFuel);
+    FuelIndicator->setPosition(20, 580);
+    //Fuel cursor
+    FuelCursor = new sf::RectangleShape(sf::Vector2f(FuelIndicator->getLocalBounds().width * FuelIndicator->getScale().x-85, 5));
+    FuelCursor->setFillColor(sf::Color::Red);
+    FuelCursor->setOrigin(0, FuelCursor->getSize().y / 2.f);
+    FuelCursor->setPosition(FuelIndicator->getPosition().x+10, FuelIndicator->getPosition().y + FuelIndicator->getLocalBounds().width * FuelIndicator->getScale().y-10);
+    //FuelWarning
+    FuelWarning = new sf::CircleShape(45, 20);
+    FuelWarning->setFillColor(sf::Color(255,0,0,0));
+    FuelWarning->setPosition(80, 550);
+    FuelWarningIntensity = 0;
+    FuelWarningIntensityUp = true;
+
+    OxygenJaugeNumber = 5;
+    OxygenLevelMax = OxygenLevel = 100;
+    for (int i = 0; i < OxygenJaugeNumber; i++) {
+        sf::RectangleShape* temp = new sf::RectangleShape(sf::Vector2f(40, 140));
+        temp->setFillColor(sf::Color::Red);
+        temp->setOutlineColor(sf::Color::Black);
+        temp->setOutlineThickness(5);
+        temp->setPosition(300 + i * 58, 500);
+        OxygenJauges.push_back(temp);
+
+        sf::RectangleShape* temp2 = new sf::RectangleShape(sf::Vector2f(40, 140));
+        temp2->setFillColor(sf::Color::White);
+        temp2->setPosition(300 + i * 58, 500);
+        temp2->setScale(1,0);
+        OxygenJaugesContent.push_back(temp2);
+    }
+
+    arial = new sf::Font();
+    arial->loadFromFile("ARIAL.TTF");
+
+    MinimapText = new sf::Text();
+    OxygenText = new sf::Text();
+    TorpedoText = new sf::Text();
+
+    MinimapText->setFont(*arial);
+    OxygenText->setFont(*arial);
+    TorpedoText->setFont(*arial);
+
+    MinimapText->setString("Minimap");
+    OxygenText->setString("Oxygen level");
+    TorpedoText->setString("Torpedo");
+
+    MinimapText->setPosition(85, 260);
+    OxygenText->setPosition(300, 650);
+    TorpedoText->setPosition(100, 420);
+
     SpawnEnemie();
 }
 
@@ -182,6 +236,8 @@ void GameManager::processEvent()
 
         if ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::F))
             Player->fillGasoline();
+        if ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::G))
+            RefillOxygen();
     }
 }
 
@@ -280,11 +336,28 @@ void GameManager::updateScreen()
 
     Window->draw(*TorpedoTimer);
     Window->draw(*TorpedoTimercursor);
-
     for (int i = 0; i < Player->getTorpedoCount(); i++) {
         Window->draw(*TorpedoCharged[i]);
     }
 
+    UpdateFuelCursor();
+    Window->draw(*FuelIndicator);
+    Window->draw(*FuelCursor);
+    updateFuelWarning();
+    Window->draw(*FuelWarning);
+
+    for (sf::RectangleShape* rs : OxygenJauges) {
+        Window->draw(*rs);
+    }
+    for (sf::RectangleShape* rs : OxygenJaugesContent) {
+        Window->draw(*rs);
+    }
+
+    updateOxygenLevel();
+
+    Window->draw(*MinimapText);
+    Window->draw(*OxygenText);
+    Window->draw(*TorpedoText);
 
     // Update the window
     Window->display();
@@ -326,7 +399,7 @@ void GameManager::UpdateMinimap()
 
 void GameManager::UpdateTimerCursor(float countdown)
 {
-    float rota = countdown * 360.f;
+    float rota = countdown * 360.f - 90;
     TorpedoTimercursor->setRotation(rota);
 }
 
@@ -365,6 +438,13 @@ void GameManager::UpdateSpeedCursor()
     float percent = speed / 400;
 
     SpeedCursor->setRotation(percent * 180 -90);
+}
+
+void GameManager::UpdateFuelCursor()
+{
+    float qte = Player->getGasoline() / Player->getMaxGasoline();
+
+    FuelCursor->setRotation(-qte * 90);
 }
 
 void GameManager::UpdateMotorLevelCursor()
@@ -413,4 +493,67 @@ void GameManager::ShootTorpedo()
         AllTorpedo.push_back(new Torpedo(Player->getCoordinate(), Player->getRotation()));
         Player->useTorpedo();
     }
+}
+
+void GameManager::updateFuelWarning()
+{
+    if (Player->getGasoline() < 25) {
+        float blinkingSpeed = 10 / Player->getGasoline();//divide by 0 lol ptdr mdr trololol.
+
+
+        if (FuelWarningIntensityUp) {
+            FuelWarningIntensity += DeltaTime * blinkingSpeed;
+            if (FuelWarningIntensity >= 1) {
+                FuelWarningIntensity = 1;
+                FuelWarningIntensityUp = false;
+            }
+        }
+        else {
+            FuelWarningIntensity -= DeltaTime * blinkingSpeed;
+            if (FuelWarningIntensity <= 0) {
+                FuelWarningIntensity = 0;
+                FuelWarningIntensityUp = true;
+            }
+        }
+    }
+    else {
+        FuelWarningIntensity = 0;
+        FuelWarningIntensityUp = false;
+    }
+
+    sf::Color temp = FuelWarning->getFillColor();
+    temp.a = FuelWarningIntensity * 255;
+    FuelWarning->setFillColor(temp);
+}
+
+void GameManager::updateOxygenLevel()
+{
+    if (OxygenLevel > 0) {
+        OxygenLevel -= DeltaTime * 2.5;
+
+
+        float tempOxyPercent = OxygenLevel / OxygenLevelMax * 100;
+
+        for (int i = OxygenJaugeNumber - 1; i >= 0; i--) {
+            if (tempOxyPercent >= 100.f / OxygenJaugeNumber) {
+                OxygenJaugesContent[i]->setScale(1, 0);
+                tempOxyPercent -= 100.f / OxygenJaugeNumber;
+            }
+            else if (tempOxyPercent > 0) {
+                OxygenJaugesContent[i]->setScale(1, 1 - tempOxyPercent / (100.f / OxygenJaugeNumber));
+                tempOxyPercent -= 100.f / OxygenJaugeNumber;
+            }
+            else {
+                OxygenJaugesContent[i]->setScale(1, 1);
+            }
+        }
+    }
+    else {
+        OxygenLevel = 0;
+    }
+}
+
+void GameManager::RefillOxygen()
+{
+    OxygenLevel = OxygenLevelMax;
 }

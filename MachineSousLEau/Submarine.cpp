@@ -91,6 +91,11 @@ float Submarine::getGasoline() const
 	return gasolineLevel;
 }
 
+float Submarine::getMaxGasoline() const
+{
+	return 100.f;
+}
+
 void Submarine::fillGasoline()
 {
 	gasolineLevel = 100;

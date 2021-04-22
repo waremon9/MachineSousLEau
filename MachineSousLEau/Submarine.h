@@ -41,6 +41,7 @@ public:
 	void useTorpedo();
 
 	float getGasoline() const;
+	float getMaxGasoline() const;
 	void fillGasoline();
 
 	void addVelocity(sf::Vector2f);
