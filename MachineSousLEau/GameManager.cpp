@@ -31,12 +31,17 @@ void GameManager::initialize() {
     rect2 = new sf::RectangleShape(sf::Vector2f(850, 850));
     rect2->setFillColor(sf::Color(100, 100, 100, 150));
     rect2->setPosition(650, 0);
+    //Background texture
+    BackgroundText = new sf::Texture();
+    BackgroundText->loadFromFile("background.jpg");
+    BackgroundText->setRepeated(true);
     //GameCamera
     GameWindow = new sf::CircleShape(850 / 2, 80);
     GameWindow->setFillColor(sf::Color(14, 28, 70));
     GameWindow->setOutlineColor(sf::Color::Green);
     GameWindow->setOutlineThickness(-5);
     GameWindow->setPosition(650, 0);
+    GameWindow->setTexture(BackgroundText);
     //LeftPanel
     rect = new sf::RectangleShape(sf::Vector2f(650, 850));
     rect->setFillColor(sf::Color(100, 180, 100, 70));
@@ -91,9 +96,20 @@ void GameManager::initialize() {
         rs->setFillColor(sf::Color::Magenta);
         rs->setOutlineColor(sf::Color(150, 50, 150));
         rs->setOutlineThickness(-4);
-        rs->setPosition(120 + i * 35, 320);
+        rs->setPosition(120 + i * 35, 340);
         TorpedoCharged.push_back(rs);
     }
+    //Torpedo timer
+    TorpedoTimer = new sf::CircleShape(45, 20);
+    TorpedoTimer->setFillColor(sf::Color::Black);
+    TorpedoTimer->setOutlineColor(sf::Color::Magenta);
+    TorpedoTimer->setOutlineThickness(-2);
+    TorpedoTimer->setPosition(15, 335);
+    //Power Level Cursor
+    TorpedoTimercursor = new sf::RectangleShape(sf::Vector2f(TorpedoTimer->getRadius(),2));
+    TorpedoTimercursor->setFillColor(sf::Color(150,50,150));
+    TorpedoTimercursor->setOrigin(0, TorpedoTimercursor->getSize().y / 2.f);
+    TorpedoTimercursor->setPosition(TorpedoTimer->getPosition().x + TorpedoTimer->getRadius(), TorpedoTimer->getPosition().y + TorpedoTimer->getRadius());
 
     SpawnEnemie();
 }
@@ -189,19 +205,21 @@ void GameManager::updateEntity()
     for (Torpedo* t : AllTorpedo) {
         t->Tick(DeltaTime);
     }
+
+    CollisionCheck();
 }
 
 void GameManager::deleteElement()
 {
 	for (int i = AllEnemies.size() - 1; i >= 0; i--) {
-		if (distanceTwoPoint(AllEnemies[i]->getCoordinate(), Player->getCoordinate()) > 2000) {
+		if (distanceTwoPoint(AllEnemies[i]->getCoordinate(), Player->getCoordinate()) > 2000 || AllEnemies[i]->getDead()) {
 			delete AllEnemies[i];
 			AllEnemies.erase(AllEnemies.begin() + i);
 		}
 	}
 
 	for (int i = AllTorpedo.size() - 1; i >= 0; i--) {
-		if (AllTorpedo[i]->LifeSpanEnded()) {
+		if (AllTorpedo[i]->LifeSpanEnded() || AllTorpedo[i]->isDead()) {
 			delete AllTorpedo[i];
             AllTorpedo.erase(AllTorpedo.begin() + i);
 		}
@@ -260,6 +278,9 @@ void GameManager::updateScreen()
     Window->draw(*MotorPower);
     Window->draw(*MotorPowerCursor);
 
+    Window->draw(*TorpedoTimer);
+    Window->draw(*TorpedoTimercursor);
+
     for (int i = 0; i < Player->getTorpedoCount(); i++) {
         Window->draw(*TorpedoCharged[i]);
     }
@@ -302,6 +323,25 @@ void GameManager::UpdateMinimap()
         icon->setPosition(xP, yP);
     }
 }
+
+void GameManager::UpdateTimerCursor(float countdown)
+{
+    float rota = countdown * 360.f;
+    TorpedoTimercursor->setRotation(rota);
+}
+
+void GameManager::CollisionCheck()
+{
+    for (Enemie* e : AllEnemies) {
+        for (Torpedo* t : AllTorpedo) {
+            if (t->getShape()->getGlobalBounds().intersects(e->getShape()->getGlobalBounds())) {
+                e->setDead(true);
+                t->setDead(true);
+            }
+        }
+    }
+}
+
 
 void GameManager::UpdateSonar()
 {

@@ -22,14 +22,17 @@ private:
 	sf::CircleShape* PlayerIcon;
 	sf::CircleShape* GameWindow;
 	sf::CircleShape* Minimap;
+	sf::CircleShape* TorpedoTimer;
 	sf::Sprite* SpeedIndicator;
 	sf::RectangleShape* rect;
 	sf::RectangleShape* rect2;
 	sf::RectangleShape* Sonar;
 	sf::RectangleShape* SpeedCursor;
+	sf::RectangleShape* TorpedoTimercursor;
 	sf::RectangleShape* MotorPower;
 	sf::RectangleShape* MotorPowerCursor;
 	std::vector<sf::RectangleShape*> TorpedoCharged;
+	sf::Texture* BackgroundText;
 
 	void updateDeltaTime();
 	void processEvent();
@@ -66,6 +69,10 @@ public:
 
 	Submarine* getPlayer() const;
 	sf::CircleShape* getGameWindow() const;
+
+	void UpdateTimerCursor(float);
+
+	void CollisionCheck();
 
 	sf::RenderWindow* getWindow() const { return Window; }
 };

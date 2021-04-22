@@ -10,6 +10,7 @@ Enemie::Enemie()
 	_Shape->setFillColor(sf::Color::Yellow);
 	_Shape->setOrigin(15, 15);
 	DotIntensity = 0;
+	Dead = false;
 }
 
 Enemie::Enemie(sf::Vector2f coord)
@@ -24,6 +25,7 @@ Enemie::Enemie(sf::Vector2f coord)
 	setCoordinate(coord);
 
 	DotIntensity = 0;
+	Dead = false;
 }
 
 sf::CircleShape* Enemie::getShape() { return _Shape; }
@@ -35,6 +37,11 @@ sf::CircleShape* Enemie::getShapeMinimap()
 
 sf::Vector2f Enemie::getCoordinate() const { return Coordinate; }
 
+bool Enemie::getDead() const
+{
+	return Dead;
+}
+
 
 void Enemie::setCoordinate(sf::Vector2f coord)
 {
@@ -44,6 +51,11 @@ void Enemie::setCoordinate(sf::Vector2f coord)
 void Enemie::setScreenPosition(sf::Vector2f pos)
 {
 	_Shape->setPosition(pos);
+}
+
+void Enemie::setDead(bool b)
+{
+	Dead = b;
 }
 
 void Enemie::Tick(float deltaTime)

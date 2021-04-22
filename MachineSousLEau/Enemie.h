@@ -9,6 +9,7 @@ private:
 	float DotIntensity;
 	sf::Vector2f Coordinate;
 	sf::Vector2f ScreenPosition;
+	bool Dead;
 
 public:
 	Enemie();
@@ -17,9 +18,11 @@ public:
 	sf::CircleShape* getShape();
 	sf::CircleShape* getShapeMinimap();
 	sf::Vector2f getCoordinate() const;
+	bool getDead() const;
 
 	void setCoordinate(sf::Vector2f);
 	void setScreenPosition(sf::Vector2f);
+	void setDead(bool);
 	void Tick(float);
 	void resetIntensity();
 };

@@ -29,6 +29,7 @@ public:
 	sf::RectangleShape* getShape();
 	sf::Vector2f getCoordinate() const;
 	sf::Vector2f getScreenPosition() const;
+	sf::Vector2f getVelocity() const;
 	float getRotation() const;
 	float getSpeed() const;
 	int getMotorLevel() const;

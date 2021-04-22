@@ -13,6 +13,7 @@ private:
 	float MaxSpeed;
 	float Rotation;
 	float LifeSpan;
+	bool Dead;
 
 public:
 	Torpedo(sf::Vector2f, float);
@@ -21,7 +22,9 @@ public:
 	sf::Vector2f getCoordinate() const;
 	sf::Vector2f getScreenPosition() const;
 	bool LifeSpanEnded() const;
+	bool isDead() const;
 
+	void setDead(bool);
 	void setCoordinate(sf::Vector2f);
 	void setScreenPosition(sf::Vector2f);
 	void setRotation(float);

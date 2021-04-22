@@ -5,9 +5,9 @@
 
 Torpedo::Torpedo(sf::Vector2f coord, float rota)
 {
-	AccelerationSpeed = 50;
-	Speed = 15;
-	MaxSpeed = 50;
+	AccelerationSpeed = 75;
+	Speed = 5;
+	MaxSpeed = 100;
 	LifeSpan = 5;
 	Coordinate = coord;
 	ScreenPosition = GameManager::getInstance()->getPlayer()->getScreenPosition();
@@ -18,6 +18,8 @@ Torpedo::Torpedo(sf::Vector2f coord, float rota)
 	Torp->setFillColor(sf::Color::Magenta);
 	Torp->setPosition(ScreenPosition);
 	Torp->setRotation(Rotation);
+
+	Dead = false;
 }
 
 sf::RectangleShape* Torpedo::getShape()
@@ -38,6 +40,16 @@ sf::Vector2f Torpedo::getScreenPosition() const
 bool Torpedo::LifeSpanEnded() const
 {
 	return LifeSpan <= 0;
+}
+
+bool Torpedo::isDead() const
+{
+	return Dead;
+}
+
+void Torpedo::setDead(bool b)
+{
+	Dead = b;
 }
 
 void Torpedo::setCoordinate(sf::Vector2f coord)

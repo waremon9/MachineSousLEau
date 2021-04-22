@@ -1,5 +1,6 @@
 #include "Submarine.h"
 #include <iostream>
+#include "GameManager.h"
 
 Submarine::Submarine(sf::Vector2f pos)
 {
@@ -10,7 +11,7 @@ Submarine::Submarine(sf::Vector2f pos)
 	MaxMotorLevel = 3;
 	MinMotorLevel = -1;
 	motorLevel = 0;
-	baseTorpedoCountdown = 1;
+	baseTorpedoCountdown = 1.f;
 	torpedoCountdown = baseTorpedoCountdown;
 	maxTorpedo = 5;
 	torpedoCount = 0;
@@ -21,7 +22,6 @@ Submarine::Submarine(sf::Vector2f pos)
 	Sub->setFillColor(sf::Color::Red);
 	Sub->setOrigin(27,15);
 	Sub->setPosition(ScreenPosition);
-
 	setCoordinate(sf::Vector2f(0, 0));
 	setRotation(90);
 
@@ -34,6 +34,11 @@ sf::Vector2f Submarine::getCoordinate() const { return Coordinate; }
 sf::Vector2f Submarine::getScreenPosition() const
 {
 	return ScreenPosition;
+}
+
+sf::Vector2f Submarine::getVelocity() const
+{
+	return Velocity;
 }
 
 float Submarine::getRotation() const
@@ -146,7 +151,6 @@ void Submarine::Tick(float deltaTime)
 {
 
 	if (gasolineLevel > 0) gasolineLevel -= deltaTime;
-	std::cout << "\n" + std::to_string(gasolineLevel);
 
 	if (gasolineLevel > 0)
 	{
@@ -159,7 +163,10 @@ void Submarine::Tick(float deltaTime)
 	Velocity /= 1.0005f;
 
 
-	if(torpedoCount < maxTorpedo) torpedoCountdown-= deltaTime;
+	if (torpedoCount < maxTorpedo) {
+		torpedoCountdown -= deltaTime;
+		GameManager::getInstance()->UpdateTimerCursor(torpedoCountdown / baseTorpedoCountdown);
+	}
 	if (torpedoCountdown <= 0)
 	{
 		torpedoCountdown = baseTorpedoCountdown;
