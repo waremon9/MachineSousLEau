@@ -32,16 +32,6 @@ void GameManager::initialize() {
     rect->setFillColor(sf::Color(100, 180, 100, 70));
     rect->setOutlineColor(sf::Color::Green);
     rect->setOutlineThickness(-5);
-    //RightPanel
-    rect2 = new sf::RectangleShape(sf::Vector2f(850, 850));
-    rect2->setFillColor(sf::Color(100, 100, 100, 150));
-    rect2->setPosition(650, 0);
-    //GameCamera
-    GameWindow = new sf::CircleShape(850 / 2, 80);
-    GameWindow->setFillColor(sf::Color(14,28,70));
-    GameWindow->setOutlineColor(sf::Color::Green);
-    GameWindow->setOutlineThickness(-5);
-    GameWindow->setPosition(650, 0);
     //Minimap
     Minimap = new sf::CircleShape(120, 40);
     Minimap->setFillColor(sf::Color::Black);
@@ -58,6 +48,27 @@ void GameManager::initialize() {
     PlayerIcon->setFillColor(sf::Color::Red);
     PlayerIcon->setOrigin(5, 5);
     PlayerIcon->setPosition(Minimap->getPosition() + sf::Vector2f(Minimap->getRadius(), Minimap->getRadius()));
+    //Speed indicator
+    SpeedIndicator = new sf::CircleShape(40, 20);
+    SpeedIndicator->setFillColor(sf::Color::Black);
+    SpeedIndicator->setOutlineColor(sf::Color::Green);
+    SpeedIndicator->setOutlineThickness(-2);
+    SpeedIndicator->setPosition(300, 40);
+    //Speed cursor
+    SpeedCursor = new sf::RectangleShape(sf::Vector2f(SpeedIndicator->getRadius(), 2));
+    SpeedCursor->setFillColor(sf::Color::Green);
+    SpeedCursor->setOrigin(0, SpeedCursor->getSize().y / 1.f);
+    SpeedCursor->setPosition(SpeedIndicator->getPosition().x + SpeedIndicator->getRadius(), SpeedIndicator->getPosition().y + SpeedIndicator->getRadius());
+    //RightPanel
+    rect2 = new sf::RectangleShape(sf::Vector2f(850, 850));
+    rect2->setFillColor(sf::Color(100, 100, 100, 150));
+    rect2->setPosition(650, 0);
+    //GameCamera
+    GameWindow = new sf::CircleShape(850 / 2, 80);
+    GameWindow->setFillColor(sf::Color(14,28,70));
+    GameWindow->setOutlineColor(sf::Color::Green);
+    GameWindow->setOutlineThickness(-5);
+    GameWindow->setPosition(650, 0);
 
     Player = new Submarine(GameWindow->getPosition() + sf::Vector2f(GameWindow->getRadius(), GameWindow->getRadius()));
     Player->setCoordinate(GameWindow->getPosition() + sf::Vector2f(GameWindow->getRadius(), GameWindow->getRadius()));
@@ -143,7 +154,8 @@ void GameManager::updateEntity()
 
     UpdateMinimap();
 
-    float RotationSpeed = 0.01;
+
+    float RotationSpeed = 0.04;
     if (RightDown) Player->addRotation(RotationSpeed);
     if (LeftDown) Player->addRotation(-RotationSpeed);
 
@@ -204,6 +216,7 @@ void GameManager::updateScreen()
 		}
     }
 
+    //Ui left panel
     Window->draw(*Minimap);
     for (Enemie* e : AllEnemies) {
         if (distanceTwoPoint(e->getShapeMinimap()->getPosition(), PlayerIcon->getPosition()) < Minimap->getRadius() + Minimap->getOutlineThickness()){
@@ -213,6 +226,10 @@ void GameManager::updateScreen()
     UpdateSonar();
 	Window->draw(*Sonar);
 	Window->draw(*PlayerIcon);
+
+    UpdateSpeedCursor();
+    Window->draw(*SpeedIndicator);
+    Window->draw(*SpeedCursor);
 
     // Update the window
     Window->display();
@@ -266,6 +283,14 @@ void GameManager::UpdateSonar()
 
         if (SonarRotation - RotaEnemie <= 0.5 && SonarRotation - RotaEnemie >0) e->resetIntensity();
     }
+}
+
+void GameManager::UpdateSpeedCursor()
+{
+    float speed = Player->getSpeed();
+    float percent = speed / 200;
+
+    SpeedCursor->setRotation(percent * 180 -180);
 }
 
 void GameManager::SpawnEnemie()

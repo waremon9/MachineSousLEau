@@ -31,6 +31,11 @@ float Submarine::getRotation() const
 	return Rotation;
 }
 
+float Submarine::getSpeed() const
+{
+	return sqrt(Velocity.x * Velocity.x + Velocity.y * Velocity.y);
+}
+
 void Submarine::motorIsOn(bool b)
 {
 	Moving = b;

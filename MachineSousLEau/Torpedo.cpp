@@ -5,8 +5,9 @@
 
 Torpedo::Torpedo(sf::Vector2f coord, float rota)
 {
-	AccelerationSpeed = Speed = 10;
-	MaxSpeed = 700;
+	AccelerationSpeed = 50;
+	Speed = 15;
+	MaxSpeed = 50;
 	LifeSpan = 5;
 	Coordinate = coord;
 	ScreenPosition = GameManager::getInstance()->getPlayer()->getScreenPosition();

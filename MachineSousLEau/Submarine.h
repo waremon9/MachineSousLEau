@@ -19,6 +19,7 @@ public:
 	sf::Vector2f getCoordinate() const;
 	sf::Vector2f getScreenPosition() const;
 	float getRotation() const;
+	float getSpeed() const;
 
 	void motorIsOn(bool);
 	void addVelocity(sf::Vector2f);

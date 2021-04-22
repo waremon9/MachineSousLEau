@@ -22,9 +22,11 @@ private:
 	sf::CircleShape* PlayerIcon;
 	sf::CircleShape* GameWindow;
 	sf::CircleShape* Minimap;
+	sf::CircleShape* SpeedIndicator;
 	sf::RectangleShape* rect;
 	sf::RectangleShape* rect2;
 	sf::RectangleShape* Sonar;
+	sf::RectangleShape* SpeedCursor;
 
 	void updateDeltaTime();
 	void processEvent();
@@ -36,6 +38,7 @@ private:
 
 	void UpdateMinimap();
 	void UpdateSonar();
+	void UpdateSpeedCursor();
 	void SpawnEnemie();
 	void UpdateSpawnCooldown();
 	float RandomFloat(float, float);
