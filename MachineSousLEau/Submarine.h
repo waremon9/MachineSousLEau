@@ -9,7 +9,6 @@ private:
 	sf::Vector2f ScreenPosition;
 	sf::Vector2f Velocity;
 	float Rotation;
-	bool Moving;
 	float AccelerationSpeed;
 	int motorLevel;
 	float speedPower;
@@ -23,7 +22,6 @@ public:
 	float getRotation() const;
 	float getSpeed() const;
 
-	void motorIsOn(bool);
 	void addVelocity(sf::Vector2f);
 	void addRotation(float);
 	void resetVelocity();

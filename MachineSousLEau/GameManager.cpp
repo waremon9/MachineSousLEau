@@ -127,9 +127,9 @@ void GameManager::processEvent()
             Window->close();
 
         if ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Up))
-            Player->motorIsOn(true);
+            Player->upgradeMotorLevel();
         if ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Down))
-            Player->motorIsOn(false);
+            Player->reduceMotorLevel();
         if ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Right))
             RightDown = true;
         if ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Left))

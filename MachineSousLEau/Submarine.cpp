@@ -4,7 +4,6 @@ Submarine::Submarine(sf::Vector2f pos)
 {
 	Velocity = sf::Vector2f(0, 0);
 	ScreenPosition = pos;
-	Moving = false;
 	AccelerationSpeed = (0.1);
 
 
@@ -37,11 +36,6 @@ float Submarine::getSpeed() const
 	return sqrt(Velocity.x * Velocity.x + Velocity.y * Velocity.y);
 }
 
-void Submarine::motorIsOn(bool b)
-{
-	Moving = b;
-	motorLevel = 1;
-}
 
 void Submarine::addVelocity(sf::Vector2f v)
 {
@@ -79,7 +73,7 @@ void Submarine::reduceMotorLevel()
 
 void Submarine::setSpeedPower()
 {
-	speedPower = (1 / 3) * motorLevel;
+	speedPower = (1.f / 3.f) * motorLevel;
 }
 
 void Submarine::setCoordinate(sf::Vector2f coord)
@@ -95,10 +89,9 @@ void Submarine::setRotation(float rota)
 
 void Submarine::Tick(float deltaTime)
 {
-	if (Moving) {
-		Velocity.x -= cos(Rotation / 180 * 3.1415) * AccelerationSpeed * speedPower;
-		Velocity.y -= sin(Rotation / 180 * 3.1415) * AccelerationSpeed * speedPower;
-	}
+	Velocity.x -= cos(Rotation / 180 * 3.1415) * AccelerationSpeed * speedPower;
+	Velocity.y -= sin(Rotation / 180 * 3.1415) * AccelerationSpeed * speedPower;
+
 	Coordinate += Velocity * deltaTime;
 	Velocity /= 1.0005f;
 }
