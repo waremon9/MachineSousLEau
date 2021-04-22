@@ -7,6 +7,7 @@ Submarine::Submarine(sf::Vector2f pos)
 	Moving = false;
 	AccelerationSpeed = (0.1);
 
+
 	Sub = new sf::RectangleShape(sf::Vector2f(54,30));
 	Sub->setFillColor(sf::Color::Red);
 	Sub->setOrigin(27,15);
@@ -39,6 +40,7 @@ float Submarine::getSpeed() const
 void Submarine::motorIsOn(bool b)
 {
 	Moving = b;
+	motorLevel = 1;
 }
 
 void Submarine::addVelocity(sf::Vector2f v)
@@ -57,6 +59,29 @@ void Submarine::resetVelocity()
 	Velocity = sf::Vector2f(0, 0);
 }
 
+void Submarine::upgradeMotorLevel()
+{
+	if (motorLevel < 3)
+	{
+		motorLevel++;
+		setSpeedPower();
+	}
+}
+
+void Submarine::reduceMotorLevel()
+{
+	if (motorLevel > 0)
+	{
+		motorLevel--;
+		setSpeedPower();
+	}
+}
+
+void Submarine::setSpeedPower()
+{
+	speedPower = (1 / 3) * motorLevel;
+}
+
 void Submarine::setCoordinate(sf::Vector2f coord)
 {
 	Coordinate = coord;
@@ -71,8 +96,8 @@ void Submarine::setRotation(float rota)
 void Submarine::Tick(float deltaTime)
 {
 	if (Moving) {
-		Velocity.x -= cos(Rotation / 180 * 3.1415) * AccelerationSpeed;
-		Velocity.y -= sin(Rotation / 180 * 3.1415) * AccelerationSpeed;
+		Velocity.x -= cos(Rotation / 180 * 3.1415) * AccelerationSpeed * speedPower;
+		Velocity.y -= sin(Rotation / 180 * 3.1415) * AccelerationSpeed * speedPower;
 	}
 	Coordinate += Velocity * deltaTime;
 	Velocity /= 1.0005f;

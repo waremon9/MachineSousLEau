@@ -11,6 +11,8 @@ private:
 	float Rotation;
 	bool Moving;
 	float AccelerationSpeed;
+	int motorLevel;
+	float speedPower;
 
 public:
 	Submarine(sf::Vector2f);
@@ -26,6 +28,9 @@ public:
 	void addRotation(float);
 	void resetVelocity();
 
+	void upgradeMotorLevel();
+	void reduceMotorLevel();
+	void setSpeedPower();
 	void setCoordinate(sf::Vector2f);
 	void setRotation(float);
 	void Tick(float);
