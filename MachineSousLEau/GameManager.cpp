@@ -170,7 +170,7 @@ void GameManager::updateEntity()
     UpdateMinimap();
 
 
-    float RotationSpeed = 0.04;
+    float RotationSpeed = 0.01;
     if (RightDown) Player->addRotation(RotationSpeed);
     if (LeftDown) Player->addRotation(-RotationSpeed);
 
@@ -354,5 +354,9 @@ float GameManager::RandomFloat(float LO, float HI)
 
 void GameManager::ShootTorpedo()
 {
-    AllTorpedo.push_back(new Torpedo(Player->getCoordinate(), Player->getRotation()));
+    if (Player->getTorpedoCount() > 0)
+    {
+        AllTorpedo.push_back(new Torpedo(Player->getCoordinate(), Player->getRotation()));
+        Player->useTorpedo();
+    }
 }

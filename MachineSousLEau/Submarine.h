@@ -15,6 +15,9 @@ private:
 	int MinMotorLevel;
 	float speedPower;
 
+	//Torpedo system
+	float baseTorpedoCountdown;
+	float torpedoCountdown;
 	int torpedoCount;
 	int maxTorpedo;
 
@@ -29,6 +32,9 @@ public:
 	int getMotorLevel() const;
 	int getMinMotorLevel() const;
 	int getQteMotorLevel() const;
+
+	int getTorpedoCount() const;
+	void useTorpedo();
 
 	void addVelocity(sf::Vector2f);
 	void addRotation(float);

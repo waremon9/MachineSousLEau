@@ -1,4 +1,5 @@
 #include "Submarine.h"
+#include <iostream>
 
 Submarine::Submarine(sf::Vector2f pos)
 {
@@ -9,6 +10,10 @@ Submarine::Submarine(sf::Vector2f pos)
 	MaxMotorLevel = 3;
 	MinMotorLevel = -1;
 	motorLevel = 0;
+	baseTorpedoCountdown = 1;
+	torpedoCountdown = baseTorpedoCountdown;
+	maxTorpedo = 3;
+	torpedoCount = 3;
 
 	Sub = new sf::RectangleShape(sf::Vector2f(54,30));
 	Sub->setFillColor(sf::Color::Red);
@@ -53,7 +58,20 @@ int Submarine::getMinMotorLevel() const
 
 int Submarine::getQteMotorLevel() const
 {
-	return MaxMotorLevel-MinMotorLevel;
+	return MaxMotorLevel - MinMotorLevel;
+}
+
+int Submarine::getTorpedoCount() const
+{
+	return torpedoCount;
+}
+
+void Submarine::useTorpedo()
+{
+	if (torpedoCount > 0)
+	{
+		torpedoCount--;
+	}
 }
 
 
@@ -114,4 +132,11 @@ void Submarine::Tick(float deltaTime)
 
 	Coordinate += Velocity * deltaTime;
 	Velocity /= 1.0005f;
+
+	if(torpedoCount < maxTorpedo) torpedoCountdown-= deltaTime;
+	if (torpedoCountdown <= 0)
+	{
+		torpedoCountdown = baseTorpedoCountdown;
+		torpedoCount++;
+	}
 }
