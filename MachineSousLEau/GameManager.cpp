@@ -54,12 +54,26 @@ void GameManager::initialize() {
     SpeedIndicator = new sf::Sprite();
     SpeedIndicator->setTexture(*text);
     SpeedIndicator->setPosition(300, 40);
-    SpeedIndicator->setScale(0.5,0.5);
+    SpeedIndicator->setScale(0.6,0.6);
     //Speed cursor
     SpeedCursor = new sf::RectangleShape(sf::Vector2f(SpeedIndicator->getLocalBounds().width / 2.f * SpeedIndicator->getScale().x - 5, 2));
     SpeedCursor->setFillColor(sf::Color::Green);
-    SpeedCursor->setOrigin(0, SpeedCursor->getSize().y / 1.f);
+    SpeedCursor->setOrigin(0, SpeedCursor->getSize().y / 2.f);
     SpeedCursor->setPosition(SpeedIndicator->getPosition().x + SpeedIndicator->getLocalBounds().width / 2.f * SpeedIndicator->getScale().x, SpeedIndicator->getPosition().y + SpeedIndicator->getLocalBounds().width / 2.f * SpeedIndicator->getScale().y - 5);
+    
+    //Power Level
+    MotorPower = new sf::RectangleShape(sf::Vector2f(500*0.6, 40));
+    MotorPower->setFillColor(sf::Color::Black);
+    MotorPower->setOutlineColor(sf::Color::Green);
+    MotorPower->setOutlineThickness(-2);
+    MotorPower->setPosition(300, 200);
+
+    //Power Level Cursor
+    MotorPowerCursor = new sf::RectangleShape(sf::Vector2f(2, MotorPower->getSize().y));
+    MotorPowerCursor->setFillColor(sf::Color::Red);
+    MotorPowerCursor->setPosition(MotorPower->getPosition().x , MotorPower->getPosition().y);
+
+    
     //RightPanel
     rect2 = new sf::RectangleShape(sf::Vector2f(850, 850));
     rect2->setFillColor(sf::Color(100, 100, 100, 150));
@@ -127,9 +141,9 @@ void GameManager::processEvent()
             Window->close();
 
         if ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Up))
-            Player->motorIsOn(true);
+            Player->upgradeMotorLevel();
         if ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Down))
-            Player->motorIsOn(false);
+            Player->reduceMotorLevel();
         if ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Right))
             RightDown = true;
         if ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Left))
@@ -232,6 +246,11 @@ void GameManager::updateScreen()
     Window->draw(*SpeedIndicator);
     Window->draw(*SpeedCursor);
 
+    UpdateMotorLevelCursor();
+    Window->draw(*MotorPower);
+    Window->draw(*MotorPowerCursor);
+
+
     // Update the window
     Window->display();
 }
@@ -292,6 +311,13 @@ void GameManager::UpdateSpeedCursor()
     float percent = speed / 200;
 
     SpeedCursor->setRotation(percent * 180 -180);
+}
+
+void GameManager::UpdateMotorLevelCursor()
+{
+    int motorLevel = Player->getMotorLevel();
+
+    MotorPowerCursor->setPosition(MotorPower->getPosition().x + MotorPower->getSize().x / 3 * motorLevel, MotorPowerCursor->getPosition().y);
 }
 
 void GameManager::SpawnEnemie()

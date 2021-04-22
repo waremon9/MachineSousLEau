@@ -27,6 +27,8 @@ private:
 	sf::RectangleShape* rect2;
 	sf::RectangleShape* Sonar;
 	sf::RectangleShape* SpeedCursor;
+	sf::RectangleShape* MotorPower;
+	sf::RectangleShape* MotorPowerCursor;
 
 	void updateDeltaTime();
 	void processEvent();
@@ -39,6 +41,7 @@ private:
 	void UpdateMinimap();
 	void UpdateSonar();
 	void UpdateSpeedCursor();
+	void UpdateMotorLevelCursor();
 	void SpawnEnemie();
 	void UpdateSpawnCooldown();
 	float RandomFloat(float, float);
