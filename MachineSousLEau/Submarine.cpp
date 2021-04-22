@@ -6,6 +6,9 @@ Submarine::Submarine(sf::Vector2f pos)
 	ScreenPosition = pos;
 	AccelerationSpeed = (0.1);
 
+	MaxMotorLevel = 3;
+	MinMotorLevel = -1;
+	motorLevel = 0;
 
 	Sub = new sf::RectangleShape(sf::Vector2f(54,30));
 	Sub->setFillColor(sf::Color::Red);
@@ -33,12 +36,24 @@ float Submarine::getRotation() const
 
 float Submarine::getSpeed() const
 {
-	return sqrt(Velocity.x * Velocity.x + Velocity.y * Velocity.y);
+	float dist = sqrt(Velocity.x * Velocity.x + Velocity.y * Velocity.y);
+	if (atan2f(-Velocity.y, -Velocity.x) * 180 / 3.1415 >= Rotation - 80 && atan2f(-Velocity.y, -Velocity.x) * 180 / 3.1415 <= Rotation + 80) return dist;
+	else return -dist;
 }
 
 int Submarine::getMotorLevel() const
 {
 	return motorLevel;
+}
+
+int Submarine::getMinMotorLevel() const
+{
+	return MinMotorLevel;
+}
+
+int Submarine::getQteMotorLevel() const
+{
+	return MaxMotorLevel-MinMotorLevel;
 }
 
 
@@ -60,7 +75,7 @@ void Submarine::resetVelocity()
 
 void Submarine::upgradeMotorLevel()
 {
-	if (motorLevel < 3)
+	if (motorLevel < MaxMotorLevel)
 	{
 		motorLevel++;
 		setSpeedPower();
@@ -69,7 +84,7 @@ void Submarine::upgradeMotorLevel()
 
 void Submarine::reduceMotorLevel()
 {
-	if (motorLevel > 0)
+	if (motorLevel > MinMotorLevel)
 	{
 		motorLevel--;
 		setSpeedPower();
@@ -78,7 +93,7 @@ void Submarine::reduceMotorLevel()
 
 void Submarine::setSpeedPower()
 {
-	speedPower = (1.f / 3.f) * motorLevel;
+	speedPower = (1.f / MaxMotorLevel) * motorLevel;
 }
 
 void Submarine::setCoordinate(sf::Vector2f coord)

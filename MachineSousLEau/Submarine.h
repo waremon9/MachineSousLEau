@@ -11,6 +11,8 @@ private:
 	float Rotation;
 	float AccelerationSpeed;
 	int motorLevel;
+	int MaxMotorLevel;
+	int MinMotorLevel;
 	float speedPower;
 
 	int torpedoCount;
@@ -25,6 +27,8 @@ public:
 	float getRotation() const;
 	float getSpeed() const;
 	int getMotorLevel() const;
+	int getMinMotorLevel() const;
+	int getQteMotorLevel() const;
 
 	void addVelocity(sf::Vector2f);
 	void addRotation(float);

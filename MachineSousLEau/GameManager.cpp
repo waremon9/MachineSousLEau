@@ -308,16 +308,16 @@ void GameManager::UpdateSonar()
 void GameManager::UpdateSpeedCursor()
 {
     float speed = Player->getSpeed();
-    float percent = speed / 200;
+    float percent = speed / 400;
 
-    SpeedCursor->setRotation(percent * 180 -180);
+    SpeedCursor->setRotation(percent * 180 -90);
 }
 
 void GameManager::UpdateMotorLevelCursor()
 {
-    int motorLevel = Player->getMotorLevel();
+    int motorLevel = Player->getMotorLevel() - Player->getMinMotorLevel();
 
-    MotorPowerCursor->setPosition(MotorPower->getPosition().x + MotorPower->getSize().x / 3 * motorLevel, MotorPowerCursor->getPosition().y);
+    MotorPowerCursor->setPosition(MotorPower->getPosition().x + MotorPower->getSize().x / Player->getQteMotorLevel() * motorLevel, MotorPowerCursor->getPosition().y);
 }
 
 void GameManager::SpawnEnemie()
