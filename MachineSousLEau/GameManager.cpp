@@ -19,7 +19,7 @@ void GameManager::initialize() {
     srand((unsigned)time(NULL));
 
     // Create the main window
-    Window = new sf::RenderWindow(sf::VideoMode(1500, 850), "SFML window");
+    Window = new sf::RenderWindow(sf::VideoMode(1500, 850), "MachineSousLEau");
 
     DeltaClock = new sf::Clock;
     DeltaTime = 0;
@@ -33,7 +33,7 @@ void GameManager::initialize() {
     rect2->setPosition(650, 0);
     //Background texture
     BackgroundText = new sf::Texture();
-    BackgroundText->loadFromFile("background.jpg");
+    BackgroundText->loadFromFile("Ressource/background.jpg");
     BackgroundText->setRepeated(true);
     //GameCamera
     GameWindow = new sf::CircleShape(850 / 2, 80);
@@ -65,7 +65,7 @@ void GameManager::initialize() {
     PlayerIcon->setPosition(Minimap->getPosition() + sf::Vector2f(Minimap->getRadius(), Minimap->getRadius()));
     //Speed indicator
     sf::Texture* text = new sf::Texture();
-    text->loadFromFile("HalfJauge.png");
+    text->loadFromFile("Ressource/HalfJauge.png");
     SpeedIndicator = new sf::Sprite();
     SpeedIndicator->setTexture(*text);
     SpeedIndicator->setPosition(300, 40);
@@ -113,7 +113,7 @@ void GameManager::initialize() {
 
     //Fuel indicator
     sf::Texture* textFuel = new sf::Texture();
-    textFuel->loadFromFile("QuarterJauge.png");
+    textFuel->loadFromFile("Ressource/QuarterJauge.png");
     FuelIndicator = new sf::Sprite();
     FuelIndicator->setTexture(*textFuel);
     FuelIndicator->setPosition(20, 580);
@@ -147,7 +147,7 @@ void GameManager::initialize() {
     }
 
     arial = new sf::Font();
-    arial->loadFromFile("ARIAL.TTF");
+    arial->loadFromFile("Ressource/ARIAL.TTF");
 
     MinimapText = new sf::Text();
     OxygenText = new sf::Text();
