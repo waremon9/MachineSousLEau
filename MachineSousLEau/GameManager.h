@@ -22,7 +22,7 @@ private:
 	sf::CircleShape* PlayerIcon;
 	sf::CircleShape* GameWindow;
 	sf::CircleShape* Minimap;
-	sf::CircleShape* SpeedIndicator;
+	sf::Sprite* SpeedIndicator;
 	sf::RectangleShape* rect;
 	sf::RectangleShape* rect2;
 	sf::RectangleShape* Sonar;

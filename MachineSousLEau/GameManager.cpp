@@ -49,16 +49,17 @@ void GameManager::initialize() {
     PlayerIcon->setOrigin(5, 5);
     PlayerIcon->setPosition(Minimap->getPosition() + sf::Vector2f(Minimap->getRadius(), Minimap->getRadius()));
     //Speed indicator
-    SpeedIndicator = new sf::CircleShape(40, 20);
-    SpeedIndicator->setFillColor(sf::Color::Black);
-    SpeedIndicator->setOutlineColor(sf::Color::Green);
-    SpeedIndicator->setOutlineThickness(-2);
+    sf::Texture* text = new sf::Texture();
+    text->loadFromFile("HalfJauge.png");
+    SpeedIndicator = new sf::Sprite();
+    SpeedIndicator->setTexture(*text);
     SpeedIndicator->setPosition(300, 40);
+    SpeedIndicator->setScale(0.5,0.5);
     //Speed cursor
-    SpeedCursor = new sf::RectangleShape(sf::Vector2f(SpeedIndicator->getRadius(), 2));
+    SpeedCursor = new sf::RectangleShape(sf::Vector2f(SpeedIndicator->getLocalBounds().width / 2.f * SpeedIndicator->getScale().x - 5, 2));
     SpeedCursor->setFillColor(sf::Color::Green);
     SpeedCursor->setOrigin(0, SpeedCursor->getSize().y / 1.f);
-    SpeedCursor->setPosition(SpeedIndicator->getPosition().x + SpeedIndicator->getRadius(), SpeedIndicator->getPosition().y + SpeedIndicator->getRadius());
+    SpeedCursor->setPosition(SpeedIndicator->getPosition().x + SpeedIndicator->getLocalBounds().width / 2.f * SpeedIndicator->getScale().x, SpeedIndicator->getPosition().y + SpeedIndicator->getLocalBounds().width / 2.f * SpeedIndicator->getScale().y - 5);
     //RightPanel
     rect2 = new sf::RectangleShape(sf::Vector2f(850, 850));
     rect2->setFillColor(sf::Color(100, 100, 100, 150));
