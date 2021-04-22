@@ -34,6 +34,7 @@ public:
 	int getQteMotorLevel() const;
 
 	int getTorpedoCount() const;
+	int getMaxTorpedo() const;
 	void useTorpedo();
 
 	void addVelocity(sf::Vector2f);

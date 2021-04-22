@@ -12,8 +12,8 @@ Submarine::Submarine(sf::Vector2f pos)
 	motorLevel = 0;
 	baseTorpedoCountdown = 1;
 	torpedoCountdown = baseTorpedoCountdown;
-	maxTorpedo = 3;
-	torpedoCount = 3;
+	maxTorpedo = 5;
+	torpedoCount = 0;
 
 	Sub = new sf::RectangleShape(sf::Vector2f(54,30));
 	Sub->setFillColor(sf::Color::Red);
@@ -64,6 +64,11 @@ int Submarine::getQteMotorLevel() const
 int Submarine::getTorpedoCount() const
 {
 	return torpedoCount;
+}
+
+int Submarine::getMaxTorpedo() const
+{
+	return maxTorpedo;
 }
 
 void Submarine::useTorpedo()

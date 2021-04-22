@@ -27,6 +27,16 @@ void GameManager::initialize() {
     MaxEnemieNumber = 100;
     BaseEnemieSpawnCooldown = EnemieSpawnCooldown = 0.8;
 
+    //RightPanel
+    rect2 = new sf::RectangleShape(sf::Vector2f(850, 850));
+    rect2->setFillColor(sf::Color(100, 100, 100, 150));
+    rect2->setPosition(650, 0);
+    //GameCamera
+    GameWindow = new sf::CircleShape(850 / 2, 80);
+    GameWindow->setFillColor(sf::Color(14, 28, 70));
+    GameWindow->setOutlineColor(sf::Color::Green);
+    GameWindow->setOutlineThickness(-5);
+    GameWindow->setPosition(650, 0);
     //LeftPanel
     rect = new sf::RectangleShape(sf::Vector2f(650, 850));
     rect->setFillColor(sf::Color(100, 180, 100, 70));
@@ -60,33 +70,30 @@ void GameManager::initialize() {
     SpeedCursor->setFillColor(sf::Color::Green);
     SpeedCursor->setOrigin(0, SpeedCursor->getSize().y / 2.f);
     SpeedCursor->setPosition(SpeedIndicator->getPosition().x + SpeedIndicator->getLocalBounds().width / 2.f * SpeedIndicator->getScale().x, SpeedIndicator->getPosition().y + SpeedIndicator->getLocalBounds().width / 2.f * SpeedIndicator->getScale().y - 5);
-    
     //Power Level
     MotorPower = new sf::RectangleShape(sf::Vector2f(500*0.6, 40));
     MotorPower->setFillColor(sf::Color::Black);
     MotorPower->setOutlineColor(sf::Color::Green);
     MotorPower->setOutlineThickness(-2);
     MotorPower->setPosition(300, 200);
-
     //Power Level Cursor
     MotorPowerCursor = new sf::RectangleShape(sf::Vector2f(2, MotorPower->getSize().y));
     MotorPowerCursor->setFillColor(sf::Color::Red);
     MotorPowerCursor->setPosition(MotorPower->getPosition().x , MotorPower->getPosition().y);
 
-    
-    //RightPanel
-    rect2 = new sf::RectangleShape(sf::Vector2f(850, 850));
-    rect2->setFillColor(sf::Color(100, 100, 100, 150));
-    rect2->setPosition(650, 0);
-    //GameCamera
-    GameWindow = new sf::CircleShape(850 / 2, 80);
-    GameWindow->setFillColor(sf::Color(14,28,70));
-    GameWindow->setOutlineColor(sf::Color::Green);
-    GameWindow->setOutlineThickness(-5);
-    GameWindow->setPosition(650, 0);
 
     Player = new Submarine(GameWindow->getPosition() + sf::Vector2f(GameWindow->getRadius(), GameWindow->getRadius()));
     Player->setCoordinate(GameWindow->getPosition() + sf::Vector2f(GameWindow->getRadius(), GameWindow->getRadius()));
+
+    //Torpedo charged
+    for (int i = 0; i < Player->getMaxTorpedo(); i++) {
+        sf::RectangleShape* rs = new sf::RectangleShape(sf::Vector2f(30,75));
+        rs->setFillColor(sf::Color::Magenta);
+        rs->setOutlineColor(sf::Color(150, 50, 150));
+        rs->setOutlineThickness(-4);
+        rs->setPosition(120 + i * 35, 320);
+        TorpedoCharged.push_back(rs);
+    }
 
     SpawnEnemie();
 }
@@ -249,6 +256,10 @@ void GameManager::updateScreen()
     UpdateMotorLevelCursor();
     Window->draw(*MotorPower);
     Window->draw(*MotorPowerCursor);
+
+    for (int i = 0; i < Player->getTorpedoCount(); i++) {
+        Window->draw(*TorpedoCharged[i]);
+    }
 
 
     // Update the window

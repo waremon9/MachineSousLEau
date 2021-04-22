@@ -29,6 +29,7 @@ private:
 	sf::RectangleShape* SpeedCursor;
 	sf::RectangleShape* MotorPower;
 	sf::RectangleShape* MotorPowerCursor;
+	std::vector<sf::RectangleShape*> TorpedoCharged;
 
 	void updateDeltaTime();
 	void processEvent();
