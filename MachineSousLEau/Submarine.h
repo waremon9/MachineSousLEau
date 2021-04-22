@@ -13,6 +13,9 @@ private:
 	int motorLevel;
 	float speedPower;
 
+	int torpedoCount;
+	int maxTorpedo;
+
 public:
 	Submarine(sf::Vector2f);
 
@@ -21,6 +24,7 @@ public:
 	sf::Vector2f getScreenPosition() const;
 	float getRotation() const;
 	float getSpeed() const;
+	int getMotorLevel() const;
 
 	void addVelocity(sf::Vector2f);
 	void addRotation(float);

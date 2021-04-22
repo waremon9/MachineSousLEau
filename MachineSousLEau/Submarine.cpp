@@ -36,6 +36,11 @@ float Submarine::getSpeed() const
 	return sqrt(Velocity.x * Velocity.x + Velocity.y * Velocity.y);
 }
 
+int Submarine::getMotorLevel() const
+{
+	return motorLevel;
+}
+
 
 void Submarine::addVelocity(sf::Vector2f v)
 {
